@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北海道狠狠滑雪度假Camp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Noto+Sans+TC:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 全局樣式 - Frozen Theme */
+        body {
+            font-family: 'Noto Sans TC', 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #cffafe 0%, #e0e7ff 50%, #f3e8ff 100%);
+            color: #334155;
+        }
+
+        /* Canvas 定位 */
+        #vibe-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(165, 243, 252, 0.8); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.8); }
+
+        /* 玻璃擬態卡片 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 40px rgba(103, 232, 249, 0.4);
+            border-color: #a5f3fc;
+        }
+
+        /* 警告卡片 (Red Warning) */
+        .glass-warning {
+            background: rgba(254, 226, 226, 0.8);
+            border-left: 5px solid #ef4444;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* 一般提示卡片 */
+        .glass-note {
+            background: rgba(224, 242, 254, 0.7);
+            border-left: 5px solid #0ea5e9;
+            backdrop-filter: blur(8px);
+        }
+
+        /* 標題漸層文字 */
+        .gradient-text {
+            background: linear-gradient(to right, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Tab 按鈕 */
+        .tab-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .tab-btn.active {
+            color: #0284c7;
+            background: rgba(224, 242, 254, 0.8);
+            border-bottom: 2px solid #0ea5e9;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(14, 165, 233, 0.1);
+        }
+
+        /* 住宿房間小卡 */
+        .room-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.2s;
+        }
+        .room-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #bae6fd;
+            box-shadow: 0 4px 12px rgba(186, 230, 253, 0.5);
+        }
+
+        /* 車輛卡片 */
+        .car-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(240,249,255,0.6) 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* 雪票表格樣式 */
+        .ticket-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .ticket-table th {
+            text-align: left;
+            padding: 16px;
+            color: #0ea5e9;
+            font-weight: 800;
+            border-bottom: 2px solid #e0f2fe;
+        }
+        .ticket-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
+        }
+        .ticket-table tr:last-child td {
+            border-bottom: none;
+        }
+        .ticket-table tr:hover td {
+            background-color: rgba(224, 242, 254, 0.3);
+        }
+
+        /* Gear Link Button */
+        .gear-btn {
+            background: linear-gradient(to right, #e0f2fe, #f0f9ff);
+            border: 1px solid #bae6fd;
+            transition: all 0.2s;
+        }
+        .gear-btn:hover {
+            background: #ffffff;
+            border-color: #0ea5e9;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Checkbox Custom Style */
+        .custom-checkbox input:checked + div {
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
+        }
+        .custom-checkbox input:checked + div svg {
+            display: block;
+        }
+
+        /* 區塊過渡動畫 */
+        section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        details summary::-webkit-details-marker { display:none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-200 selection:text-cyan-900">
+
+    <canvas id="vibe-canvas"></canvas>
+
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/40 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl tracking-wider gradient-text cursor-pointer font-bold" onclick="window.scrollTo(0,0)">
+                北海道狠狠滑雪度假Camp ❄️
+            </h1>
+            <div class="hidden md:flex space-x-6 text-sm font-semibold text-slate-500">
+                <a href="#itinerary" class="hover:text-cyan-600 transition-colors">行程</a>
+                <a href="#accommodation" class="hover:text-cyan-600 transition-colors">住宿</a>
+                <a href="#cars" class="hover:text-cyan-600 transition-colors">租車</a>
+                <a href="#tickets" class="hover:text-cyan-600 transition-colors">雪票</a>
+                <a href="#gear" class="hover:text-cyan-600 transition-colors">雪具</a>
+                <a href="#food" class="hover:text-cyan-600 transition-colors">食物</a>
+                <a href="#insurance" class="hover:text-cyan-600 transition-colors">保險</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-24 pb-20 px-4 max-w-7xl mx-auto space-y-24">
+        
+        <header class="text-center py-20 min-h-[50vh] flex flex-col justify-center items-center">
+            <h2 class="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 drop-shadow-sm animate-pulse">
+                HOKKAIDO<br>2025-26
+            </h2>
+            <p class="text-xl md:text-3xl text-slate-600 max-w-2xl mx-auto tracking-wide font-bold">
+                泡進 J-Pow 和 溫泉 ♨️
+            </p>
+            <div class="mt-12 animate-bounce">
+                <span class="text-3xl text-sky-400">❄️</span>
+            </div>
+        </header>
+
+        <section id="itinerary" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🗓️</span> 行程總覽
+                </h3>
+
+                <div class="glass-note rounded-xl p-6 mb-12 max-w-3xl mx-auto text-center shadow-sm">
+                    <p class="text-slate-700 text-lg font-medium">
+                        <span class="text-2xl mr-2">💡</span>
+                        因車子數量夠，每天可以分組調整行程，這個行程表只是粗略規劃。
+                    </p>
+                </div>
+
+                <div id="itinerary-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    </div>
+            </div>
+        </section>
+
+        <section id="accommodation" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🏠</span> 住宿分配
+                </h3>
+
+                <div class="glass-note rounded-xl p-8 mb-8 max-w-4xl mx-auto shadow-sm">
+                    <h4 class="text-xl font-bold text-slate-800 mb-6 border-b border-sky-200 pb-2">💰 費用分配邏輯說明</h4>
+                    <ul class="space-y-6 text-slate-700">
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">👥</span>
+                            <div>
+                                <strong class="text-slate-900 block mb-1">人頭基礎均分：</strong>
+                                <span class="text-sm">基礎房費由該房的所有入住成員平攤。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🏠</span>
+                            <div>
+                                <strong class="text-slate-900 block mb-1">房間權重調整 (單人住權重)：</strong>
+                                <span class="text-sm">單獨住一間房的情況，調高了每日單價負擔。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-2xl mr-4">🛏️</span>
+                            <div>
+                                <strong class="text-slate-900 block mb-2">房型溢價與減免：</strong>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center">
+                                        <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"></span>
+                                        <span class="font-bold text-indigo-600 mr-2">加大房溢價：</span>
+                                        <span>空間特別大，負擔略高於標準。</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                                        <span class="font-bold text-emerald-600 mr-2">擠房減免：</span>
+                                        <span>三人擠一間房，調降每人負擔單價。</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="glass-warning rounded-xl p-6 mb-12 max-w-4xl mx-auto flex items-start gap-4">
+                    <div class="text-4xl animate-bounce">☠️</div>
+                    <div>
+                        <h4 class="text-xl font-bold text-red-600 mb-1">嚴 正 警 告 (WARNING)</h4>
+                        <p class="text-slate-700 text-lg font-bold tracking-wide">
+                            任何情況下，男生都請<span class="text-red-600 underline decoration-4 underline-offset-4 decoration-red-400">坐著尿尿</span>，抓到處死。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mb-8 gap-4" id="accom-tabs"></div>
+                <div id="accom-content" class="space-y-12"></div>
+
+                <div class="mt-16 max-w-2xl mx-auto">
+                    <button onclick="document.getElementById('cost-summary').classList.toggle('hidden')" 
+                            class="w-full glass-panel py-4 px-6 rounded-xl flex justify-between items-center text-xl font-bold text-sky-600 hover:bg-white transition-colors">
+                        <span>💰 費用總結 (點擊展開)</span>
+                        <span>▼</span>
+                    </button>
+                    <div id="cost-summary" class="hidden mt-4 glass-panel rounded-xl p-6 animate-fade-in">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-slate-400 border-b border-slate-200">
+                                    <th class="py-3 px-4">人員</th>
+                                    <th class="py-3 px-4 text-right">住宿總金額 (NT$)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cost-table-body" class="text-slate-700"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cars" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🚗</span> 租車分配
+                </h3>
+
+                <div class="glass-note rounded-xl p-8 mb-12 max-w-4xl mx-auto shadow-sm relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 text-9xl text-sky-200/50 rotate-12">🚙</div>
+                    <h4 class="text-xl font-bold text-sky-700 mb-4 flex items-center">
+                        <span class="bg-sky-100 p-2 rounded-lg mr-3">ℹ️</span> 分帳與移動原則
+                    </h4>
+                    <ul class="space-y-3 text-slate-600 leading-relaxed font-medium">
+                        <li class="flex items-start"><span class="text-sky-500 mr-2">▪</span> 租車費用以主要分車乘客均攤。</li>
+                        <li class="flex items-start"><span class="text-sky-500 mr-2">▪</span> 油錢以主要乘客均攤。</li>
+                        <li class="flex items-start"><span class="text-sky-500 mr-2">▪</span> 高速公路過路費：集體移動所有人均攤。</li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2">★</span> 標黃（駕駛）：請務必攜帶 <strong>駕照 + 日文譯本</strong>。</li>
+                    </ul>
+                </div>
+
+                <div id="cars-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    </div>
+            </div>
+        </section>
+
+        <section id="tickets" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🎫</span> 雪票資訊
+                </h3>
+
+                <div class="glass-note rounded-xl p-6 mb-12 max-w-3xl mx-auto text-center shadow-sm">
+                    <p class="text-slate-700 text-lg font-medium">
+                        <span class="text-2xl mr-2">💡</span>
+                        如果有找到折扣價可以提前購買，25小時券在 FB 社團可以收購。
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-8 max-w-4xl mx-auto overflow-hidden relative">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-sky-300 via-indigo-300 to-purple-300"></div>
+                    <h4 class="text-2xl font-bold text-center text-slate-700 mb-8">❄️ 雪場票價一覽 (Price Table)</h4>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="ticket-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-1/3">雪場 (Resort)</th>
+                                    <th class="w-1/3">官方一日票 (Official)</th>
+                                    <th class="w-1/3">省錢攻略 (Saver Tip)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tickets-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gear" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🏂</span> 雪具租借
+                </h3>
+
+                <div class="max-w-5xl mx-auto mb-16">
+                    <h4 class="text-xl font-bold text-center text-slate-600 mb-6">📍 建議租借據點 (Rental Locations)</h4>
+                    <div id="gear-links" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto">
+                    
+                    <div class="glass-note rounded-xl p-6 mb-8">
+                        <h4 class="text-lg font-bold text-sky-700 mb-2">ℹ️ 租借重要須知</h4>
+                        <ul class="text-sm text-slate-600 space-y-2">
+                            <li>• 建議提前上網預約，請預留 <strong>40~60 分鐘</strong> 的租借時間。</li>
+                            <li>• 租借天數可按需求彈性調整，不確定可先租兩天。</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="text-2xl font-bold text-center text-slate-700 mb-6">✅ 出發前裝備檢查表</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="checklist-container">
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="food" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🍽️</span> 美食攻略
+                </h3>
+                
+                <div class="glass-note rounded-xl p-8 mb-12 max-w-4xl mx-auto shadow-sm">
+                    <h4 class="text-xl font-bold text-sky-700 mb-4">ℹ️ 用餐策略 (Dining Strategy)</h4>
+                    <div class="space-y-4 text-slate-600 font-medium">
+                        <p>雪季沒訂位很難吃到東西，原則上先暫訂 <strong>各房/車自理</strong>。</p>
+                        <div class="bg-white/50 rounded-lg p-4 border border-sky-100">
+                            <p class="flex items-center gap-2">
+                                <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-bold">HELP</span>
+                                <span><span class="text-amber-600 font-bold">Jason</span> 可以請日本朋友幫忙預訂。</span>
+                            </p>
+                            <p class="mt-2 text-sm text-slate-500">💰 代墊飯錢請務必記帳，統一收錢。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <div class="glass-panel rounded-xl p-6 text-center group hover:bg-sky-50 transition-colors">
+                        <div class="text-5xl mb-4">🍳</div>
+                        <h5 class="text-xl font-bold text-slate-700 mb-2">早餐</h5>
+                        <p class="text-slate-600 text-sm">前一晚買好 or 早上煮</p>
+                    </div>
+                    <div class="glass-panel rounded-xl p-6 text-center group hover:bg-sky-50 transition-colors">
+                        <div class="text-5xl mb-4">🍜</div>
+                        <h5 class="text-xl font-bold text-slate-700 mb-2">午餐</h5>
+                        <p class="text-slate-600 text-sm">雪場餐廳解決</p>
+                    </div>
+                    <div class="glass-panel rounded-xl p-6 text-center group hover:bg-sky-50 transition-colors">
+                        <div class="text-5xl mb-4">🍲</div>
+                        <h5 class="text-xl font-bold text-slate-700 mb-2">晚餐</h5>
+                        <p class="text-slate-600 text-sm">買食材回民宿煮 or 餐廳</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="insurance" class="scroll-trigger">
+            <div class="relative">
+                <h3 class="text-4xl font-bold mb-10 text-center text-slate-700 flex justify-center items-center gap-4">
+                    <span class="text-sky-400">🛡️</span> 旅遊保險 (Safety First)
+                </h3>
+
+                <div class="glass-warning rounded-xl p-8 max-w-4xl mx-auto mb-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                    <div class="text-6xl">🚑</div>
+                    <div>
+                        <h4 class="text-2xl font-bold text-red-600 mb-2">滑雪是高風險運動！</h4>
+                        <p class="text-slate-700 font-bold text-lg mb-4">請一定要保險！！看骨科是很貴的！！</p>
+                        <p class="text-slate-600 text-sm mb-6">
+                            推薦使用 <strong>VISIT JAPAN WEB</strong> 購買保險。<br>
+                            遇到狀況會派翻譯帶你去看醫生 + 幫你付錢。
+                        </p>
+                        <a href="https://www.japaholic.com/tw/article/detail/941401" target="_blank" class="inline-block bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all transform hover:scale-105">
+                            閱讀保險詳細說明 →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="max-w-2xl mx-auto text-center text-slate-500 text-sm">
+                    <p>⚠️ 大家如果有自己的私人保險，請務必確認是否涵蓋「滑雪意外」。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="relative z-10 text-center py-8 text-slate-400 text-sm font-medium">
+        <p>Built with Vibe Coding & Frozen Magic</p>
+    </footer>
+
+    <script>
+        /** Canvas Snow Effect */
+        const canvas = document.getElementById('vibe-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [], mouse = { x: 0, y: 0 };
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * width; this.y = Math.random() * -height; this.size = Math.random() * 3 + 1; this.speedY = Math.random() * 1 + 0.2; this.speedX = Math.random() * 0.8 - 0.4; this.opacity = Math.random() * 0.4 + 0.2; }
+            update() { this.y += this.speedY; this.x += this.speedX; const dx = this.x - mouse.x; const dy = this.y - mouse.y; const dist = Math.sqrt(dx*dx + dy*dy); if (dist < 150) { this.x += dx / 25; this.y += dy / 25; } if (this.y > height || this.x > width || this.x < 0) this.reset(); }
+            draw() { ctx.fillStyle = `rgba(224, 242, 254, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function initParticles() { particles = []; for (let i = 0; i < Math.min(window.innerWidth / 4, 100); i++) particles.push(new Particle()); }
+        function animate() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        resize(); initParticles(); animate();
+
+        /** Scroll Observer */
+        const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+        document.querySelectorAll('.scroll-trigger').forEach(s => observer.observe(s));
+
+        /** 1. Itinerary - Compact Grid (5 Cols) */
+        const itineraryData = [
+            {'Date': '3/6', 'Activity': '交通前往住宿', 'Location': '真狩村', 'Resort': '/'}, {'Date': '3/7', 'Activity': '滑雪', 'Location': '真狩村', 'Resort': '留壽都'}, {'Date': '3/8', 'Activity': '滑雪', 'Location': '真狩村', 'Resort': '二世古/留壽都'}, {'Date': '3/9', 'Activity': '滑雪', 'Location': '真狩村', 'Resort': '二世古/留壽都'}, {'Date': '3/10', 'Activity': '滑雪', 'Location': '真狩村', 'Resort': '二世古/留壽都'}, {'Date': '3/11', 'Activity': '休Day搬家', 'Location': '洞爺湖', 'Resort': '-'}, {'Date': '3/12', 'Activity': '滑雪', 'Location': '洞爺湖', 'Resort': '二世古/留壽都'}, {'Date': '3/13', 'Activity': '滑雪', 'Location': '洞爺湖', 'Resort': '留壽都'}, {'Date': '3/14', 'Activity': '滑雪', 'Location': '洞爺湖', 'Resort': '留壽都'}, {'Date': '3/15', 'Activity': '交通前往機場', 'Location': '-', 'Resort': '-'}
+        ];
+        const itineraryGrid = document.getElementById('itinerary-grid');
+        function getIcon(a) { if (a.includes('滑雪')) return '🏂'; if (a.includes('交通')) return '🚐'; if (a.includes('休Day')) return '🛀'; return '✨'; }
+        itineraryData.forEach(d => {
+            let c = "border-white/50", b = "bg-slate-100 text-slate-500", t = "text-slate-700";
+            if (d.Activity.includes('滑雪')) { c = "border-sky-300 bg-sky-50/50"; b = "bg-sky-100 text-sky-600"; }
+            else if (d.Activity.includes('交通')) { c = "border-amber-300 bg-amber-50/80 shadow-[0_0_15px_rgba(251,191,36,0.15)]"; b = "bg-amber-100 text-amber-600"; t = "text-amber-900"; }
+            else if (d.Activity.includes('休Day')) { c = "border-teal-300 bg-teal-50/80 shadow-[0_0_15px_rgba(45,212,191,0.15)]"; b = "bg-teal-100 text-teal-700"; t = "text-teal-900"; }
+            
+            // 樣式調整細節：
+            // 1. rounded-lg: 配合小尺寸圓角
+            // 2. p-1.5: 極致縮小內距
+            // 3. text-2xl: 背景圖標再縮小
+            // 4. text-[10px] & text-xs: 字體縮小以適應 grid-cols-5 的窄寬度
+            // 5. tracking-tight: 緊縮字元間距
+            
+            itineraryGrid.innerHTML += `<div class="glass-panel rounded-lg p-1.5 flex flex-col justify-between h-full ${c} relative overflow-hidden group"><div class="absolute -top-1 -right-1 p-1 opacity-10 group-hover:opacity-20 text-2xl">${getIcon(d.Activity)}</div><div><div class="flex items-center gap-1 mb-0.5"><span class="${b} px-1.5 py-0.5 rounded-full text-[10px] font-bold shadow-sm leading-none">${d.Date}</span></div><h4 class="text-xs font-bold ${t} mb-0.5 leading-tight tracking-tight">${d.Activity}</h4></div><div class="mt-1 space-y-0 text-[10px] text-slate-500 leading-tight"><div>🏠 <strong class="text-slate-700">${d.Location}</strong></div><div>🏔️ <strong class="text-slate-700">${d.Resort}</strong></div></div></div>`;
+        });
+
+        /** 2. Accommodation - Corrected Links & House Logic */
+        const accomData = [
+            {
+                "period": "3/6 - 3/11",
+                "houses": [
+                    {
+                        "name": "House 1",
+                        "map": "https://maps.app.goo.gl/QXAPuysABCPGiDsA7",
+                        "airbnb": "https://www.airbnb.com.tw/rooms/735892123232261326?viralityEntryPoint=1&s=76",
+                        "rooms": [
+                            {"name": "臥室 1", "people": [{"name": "Charlene", "cost": 12955}, {"name": "Daniel", "cost": 12955}]},
+                            {"name": "臥室 2", "people": [{"name": "Eric", "cost": 12955}, {"name": "Tony", "cost": 12955}]},
+                            {"name": "臥室 3", "people": [{"name": "周于佩", "cost": 12955}, {"name": "大師哥", "cost": 12955}]},
+                            {"name": "臥室 4", "people": [{"name": "Jocelyn", "cost": 12955}, {"name": "Sophie", "cost": 12955}]},
+                            {"name": "臥室 5", "people": [{"name": "Taco", "cost": 14900}]}
+                        ]
+                    },
+                    {
+                        "name": "House 2",
+                        "map": "https://maps.app.goo.gl/Z8rmMC9quQfwyTKT7",
+                        "airbnb": "https://www.airbnb.com.tw/rooms/1500371023344171865?guests=1&adults=1&s=67&unique_share_id=a667afab-efdb-4783-80b9-06eaf346f3ff",
+                        "rooms": [
+                            {"name": "臥室 1", "people": [{"name": "Allen", "cost": 10070}, {"name": "Jason", "cost": 10070}]},
+                            {"name": "臥室 2", "people": [{"name": "Shawn", "cost": 10070}, {"name": "國鈺", "cost": 10070}]},
+                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 10070}, {"name": "湘", "cost": 10070}]},
+                            {"name": "臥室 4", "people": [{"name": "Ann lin", "cost": 10070}, {"name": "Derek", "cost": 10070}]},
+                            {"name": "臥室 5", "people": [{"name": "Kevin", "cost": 12100}]}
+                        ]
+                    }
+                ]
+            },
+            {
+                "period": "3/11 - 3/15",
+                "houses": [
+                    {
+                        "name": "House 1",
+                        "map": "https://maps.app.goo.gl/u9KHbSZ62WLcDYSe8",
+                        "airbnb": "https://www.airbnb.com.tw/rooms/50925984?check_in=2026-03-11&check_out=2026-03-15&guests=9&adults=9&s=67&unique_share_id=891a4989-6be0-45b2-8ac4-685c36ec1c0f",
+                        "rooms": [
+                            {"name": "臥室 1", "people": [{"name": "Eric", "cost": 5288}, {"name": "Tony", "cost": 5288}]},
+                            {"name": "臥室 2", "people": [{"name": "Charlene", "cost": 5288}, {"name": "Daniel", "cost": 5288}]},
+                            {"name": "臥室 3", "people": [{"name": "周于佩", "cost": 4232}, {"name": "大師哥", "cost": 4232}, {"name": "Taco", "cost": 4232}]},
+                            {"name": "臥室 4", "people": [{"name": "Jocelyn", "cost": 5288}, {"name": "Sophie", "cost": 5288}]}
+                        ]
+                    },
+                    {
+                        "name": "House 2",
+                        "map": "https://maps.app.goo.gl/edJtpGZnaZohQHDd7",
+                        "airbnb": "https://www.airbnb.com.tw/rooms/1406335502924828688?guests=1&adults=1&s=67&unique_share_id=ec75faff-7c08-439f-9300-15587650f5ad",
+                        "rooms": [
+                            {"name": "臥室 1", "people": [{"name": "Shawn", "cost": 8576}, {"name": "國鈺", "cost": 8576}]},
+                            {"name": "臥室 2", "people": [{"name": "Ann lin", "cost": 9608}, {"name": "Derek", "cost": 9608}]},
+                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 8576}, {"name": "湘", "cost": 8576}]},
+                            {"name": "臥室 4", "people": [{"name": "Kevin", "cost": 12440}]},
+                            {"name": "臥室 5", "people": [{"name": "Allen", "cost": 8576}, {"name": "Jason", "cost": 8576}]}
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const costSummary = [{"分配人員": "Allen", "Total_Cost": 18646}, {"分配人員": "Ann lin", "Total_Cost": 19678}, {"分配人員": "Anna", "Total_Cost": 18646}, {"分配人員": "Charlene", "Total_Cost": 18243}, {"分配人員": "Daniel", "Total_Cost": 18243}, {"分配人員": "Derek", "Total_Cost": 19678}, {"分配人員": "Eric", "Total_Cost": 18243}, {"分配人員": "Jason", "Total_Cost": 18646}, {"分配人員": "Jocelyn", "Total_Cost": 18243}, {"分配人員": "Kevin", "Total_Cost": 24540}, {"分配人員": "Shawn", "Total_Cost": 18646}, {"分配人員": "Sophie", "Total_Cost": 18243}, {"分配人員": "Taco", "Total_Cost": 19132}, {"分配人員": "Tony", "Total_Cost": 18243}, {"分配人員": "周于佩", "Total_Cost": 17187}, {"分配人員": "國鈺", "Total_Cost": 18646}, {"分配人員": "大師哥", "Total_Cost": 17187}, {"分配人員": "湘", "Total_Cost": 18646}];
+        const accomTabs = document.getElementById('accom-tabs');
+        const accomContent = document.getElementById('accom-content');
+        const periods = accomData.map(d => d.period); // Already sorted in code structure
+        
+        periods.forEach((p,i) => {
+            const btn = document.createElement('button');
+            btn.className = `tab-btn px-6 py-2 rounded-full font-medium shadow-sm hover:shadow-md ${i===0?'active':''}`;
+            btn.innerText = p;
+            btn.onclick = () => renderAccom(p, btn);
+            accomTabs.appendChild(btn);
+        });
+        function renderAccom(p, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            const periodData = accomData.find(d => d.period === p);
+            
+            accomContent.innerHTML = periodData.houses.map((h, i) => `
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-slate-200 gap-3">
+                        <h4 class="text-xl font-bold text-slate-700 flex items-center">
+                            <span class="bg-sky-100 text-sky-600 px-3 py-1 rounded-lg text-sm mr-3">${h.name}</span>
+                            住宿分配
+                        </h4>
+                        <div class="flex gap-3">
+                            <a href="${h.map}" target="_blank" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-3 py-1 rounded-full text-sm font-bold hover:bg-emerald-100 transition-colors flex items-center gap-1">
+                                📍 Google Map
+                            </a>
+                            <a href="${h.airbnb}" target="_blank" class="bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1 rounded-full text-sm font-bold hover:bg-rose-100 transition-colors flex items-center gap-1">
+                                🏠 Airbnb
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        ${h.rooms.map(r => `
+                            <div class="room-card rounded-xl p-4">
+                                <div class="flex justify-between mb-3"><span class="font-bold text-slate-700">${r.name}</span><span class="text-xs bg-white/60 px-2 py-1 rounded">${r.people.length}人</span></div>
+                                <div class="space-y-2">${r.people.map(pe => `<div class="flex justify-between text-sm"><span class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-sky-200 flex items-center justify-center text-xs font-bold text-sky-700">${pe.name[0]}</div>${pe.name}</span><span class="font-mono text-sky-600">$${pe.cost.toLocaleString()}</span></div>`).join('')}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        renderAccom(periods[0], document.querySelector('.tab-btn'));
+        const costBody = document.getElementById('cost-table-body');
+        costSummary.forEach(c => costBody.innerHTML += `<tr class="border-b border-slate-200 hover:bg-white/50"><td class="py-3 px-4 font-bold text-slate-700">${c['分配人員']}</td><td class="py-3 px-4 text-right font-mono text-sky-600">$${c['Total_Cost'].toLocaleString()}</td></tr>`);
+
+        /** 3. Cars */
+        const carsData = [{"name": "車1", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Jason", "passengers": ["Allen", "湘"]}, {"name": "車2", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Shawn", "passengers": ["國鈺", "Kevin"]}, {"name": "車3", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Derek", "passengers": ["Ann lin", "Anna"]}, {"name": "車4", "price": "TBD", "model": "待定車款", "captain": "Charlene", "passengers": ["Daniel"]}, {"name": "車5", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Eric", "passengers": ["Jocelyn", "Sophie", "Tony"]}, {"name": "車6", "price": "TBD", "model": "待定車款", "captain": "Taco", "passengers": ["周于佩", "大師哥"]}];
+        const drivers = new Set(['Jason', 'Allen', 'Shawn', 'Kevin', 'Charlene', 'Daniel', 'Eric', 'Taco', 'Derek']);
+        const carsGrid = document.getElementById('cars-grid');
+        carsData.forEach(c => {
+            const people = [c.captain, ...c.passengers];
+            const pHTML = people.map(p => `<div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center text-sm shadow-sm">👤</div><span class="${drivers.has(p)?'text-amber-500 font-bold':'text-slate-500'} text-lg">${p}</span></div>`).join('');
+            const priceDisplay = c.price === "TBD" ? "待定" : "¥" + c.price.toLocaleString();
+            
+            carsGrid.innerHTML += `<div class="glass-panel rounded-2xl p-6 car-card relative group overflow-hidden"><div class="flex justify-between items-start mb-6 relative z-10"><div class="bg-sky-100 border border-sky-200 px-3 py-1 rounded-lg text-sky-700 font-bold text-sm shadow-sm">${c.name}</div><div class="text-right"><div class="text-xl font-bold text-slate-700 font-mono">${priceDisplay}</div></div></div><div class="mb-6 relative z-10"><h4 class="text-lg font-bold text-slate-700">${c.model}</h4></div><div class="space-y-3 relative z-10 pl-2">${pHTML}</div></div>`;
+        });
+
+        /** 4. Tickets (Table Format) */
+        const ticketsData = [
+            {"Resort": "二世古 (Niseko)", "Official": 12000, "Option": "神祕小黃魚 (¥7,800)"},
+            {"Resort": "留壽都 (Rusutsu)", "Official": 16200, "Option": "25小時券 (¥34,700) - 可分購"}
+        ];
+        const ticketBody = document.getElementById('tickets-table-body');
+        ticketsData.forEach(t => {
+            ticketBody.innerHTML += `
+                <tr class="hover:bg-sky-50 transition-colors">
+                    <td class="font-bold text-slate-700">${t.Resort}</td>
+                    <td class="font-mono text-sky-600 font-bold">¥${t.Official.toLocaleString()}</td>
+                    <td><span class="bg-sky-100 text-sky-700 px-2 py-1 rounded text-sm font-medium">${t.Option}</span></td>
+                </tr>
+            `;
+        });
+
+        /** 5. Gear - Organized by Location with Shop Names */
+        const gearLinks = [
+            {
+                "location": "留壽都 (Rusutsu)", 
+                "shops": [
+                    {"name": "Rusutsu Resort Official", "url": "https://rusutsu.com/zh/rentals-station/"},
+                    {"name": "Amuse Sports", "url": "https://amuse-sports.com/en/rental/item/"}
+                ]
+            },
+            {
+                "location": "二世古 (Niseko)", 
+                "shops": [
+                    {"name": "Grand Hirafu Official", "url": "https://www.grand-hirafu.jp/en/rentals/"},
+                    {"name": "Rhythm Japan", "url": "https://rhythmjapan.com/"}
+                ]
+            },
+            {
+                "location": "新千歲機場 (Airport)", 
+                "shops": [
+                    {"name": "Amuse Sports", "url": "https://amuse-sports.com/en/rental/item/"}
+                ]
+            }
+        ];
+        
+        const gearGrid = document.getElementById('gear-links');
+        gearLinks.forEach(loc => {
+            const buttons = loc.shops.map(s => `<a href="${s.url}" target="_blank" class="gear-btn block w-full text-center py-2 mb-2 rounded-lg text-slate-700 font-bold text-sm shadow-sm">${s.name}</a>`).join('');
+            gearGrid.innerHTML += `
+                <div class="glass-panel rounded-xl p-6 text-center">
+                    <h5 class="text-lg font-bold text-slate-700 mb-4">${loc.location}</h5>
+                    ${buttons}
+                </div>
+            `;
+        });
+
+        const checklistItems = [
+            {cat: "🧥 衣物", items: ["雪衣 (Snow Jacket)", "雪褲 (Snow Pants)", "保暖排汗底層衣 (Base Layer) <span class='text-xs text-slate-400 ml-1'>(❌ 不建議發熱衣)</span>"]},
+            {cat: "🛡️ 安全", items: ["頭盔 (Helmet) - 建議有 MIPS", "護目鏡 (Goggles)", "護具 (Pads) - 護膝/護臀"]},
+            {cat: "🧤 配件 & 硬體", items: ["滑雪手套 (Gloves)", "護臉 (Face Mask) - 強烈建議", "雪襪 (Snow Socks)", "雪板 & 雪鞋 (Board & Boots)"]}
+        ];
+        const checklistContainer = document.getElementById('checklist-container');
+        checklistItems.forEach(c => {
+            const itemsHTML = c.items.map(item => `
+                <label class="custom-checkbox flex items-start cursor-pointer mb-3">
+                    <input type="checkbox" class="hidden">
+                    <div class="w-5 h-5 border-2 border-slate-300 rounded mr-3 flex-shrink-0 flex items-center justify-center transition-colors mt-0.5"><svg class="w-3 h-3 text-white hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>
+                    <span class="text-slate-600 text-sm leading-tight">${item}</span>
+                </label>
+            `).join('');
+            checklistContainer.innerHTML += `
+                <div class="glass-panel rounded-xl p-6">
+                    <h5 class="text-lg font-bold text-sky-700 mb-4">${c.cat}</h5>
+                    <div>${itemsHTML}</div>
+                </div>
+            `;
+        });
+
+    </script>
+</body>
+</html>

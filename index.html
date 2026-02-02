@@ -558,7 +558,7 @@
                     },
                     {
                         "name": "House 2",
-                        "map": "https://maps.app.goo.gl/edJtpGZnaZohQHDd7",
+                        "map": "https://maps.app.goo.gl/edJtpGZnaZohQHDd7`。",
                         "airbnb": "https://www.airbnb.com.tw/rooms/1406335502924828688?guests=1&adults=1&s=67&unique_share_id=ec75faff-7c08-439f-9300-15587650f5ad",
                         "rooms": [
                             {"name": "臥室 1", "people": [{"name": "Shawn", "cost": 8576}, {"name": "國鈺", "cost": 8576}]},
@@ -621,7 +621,7 @@
         costSummary.forEach(c => costBody.innerHTML += `<tr class="border-b border-slate-200 hover:bg-white/50"><td class="py-3 px-4 font-bold text-slate-700">${c['分配人員']}</td><td class="py-3 px-4 text-right font-mono text-sky-600">$${c['Total_Cost'].toLocaleString()}</td></tr>`);
 
         /** 3. Cars */
-        const carsData = [{"name": "車1", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Jason", "passengers": ["Allen", "湘"]}, {"name": "車2", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Shawn", "passengers": ["國鈺", "Kevin"]}, {"name": "車3", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Derek", "passengers": ["Ann lin", "Anna"]}, {"name": "車4", "price": "TBD", "model": "待定車款", "captain": "Charlene", "passengers": ["Daniel"]}, {"name": "車5", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Eric", "passengers": ["Jocelyn", "Sophie", "Tony"]}, {"name": "車6", "price": "TBD", "model": "待定車款", "captain": "Taco", "passengers": ["周于佩", "大師哥"]}];
+        const carsData = [{"name": "車1", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Jason", "passengers": ["Allen", "湘"]}, {"name": "車2", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Shawn", "passengers": ["國鈺", "Kevin"]}, {"name": "車3", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Derek", "passengers": ["Ann lin", "Anna"]}, {"name": "車4", "price": 74730, "model": "Toyota Yaris Cross", "captain": "Charlene", "passengers": ["Daniel"]}, {"name": "車5", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Eric", "passengers": ["Jocelyn", "Sophie", "Tony"]}, {"name": "車6", "price": "TBD", "model": "待定車款", "captain": "Taco", "passengers": ["周于佩", "大師哥"]}];
         const drivers = new Set(['Jason', 'Allen', 'Shawn', 'Kevin', 'Charlene', 'Daniel', 'Eric', 'Taco', 'Derek']);
         const carsGrid = document.getElementById('cars-grid');
         carsData.forEach(c => {

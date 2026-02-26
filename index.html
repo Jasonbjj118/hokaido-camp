@@ -235,20 +235,20 @@
                 </h3>
 
                 <div class="glass-note rounded-xl p-8 mb-8 max-w-4xl mx-auto shadow-sm">
-                    <h4 class="text-xl font-bold text-slate-800 mb-6 border-b border-sky-200 pb-2">💰 費用分配邏輯說明</h4>
+                    <h4 class="text-xl font-bold text-slate-800 mb-6 border-b border-sky-200 pb-2">💰 費用分配邏輯說明 (Kevin 退團重算版)</h4>
                     <ul class="space-y-6 text-slate-700">
                         <li class="flex items-start">
                             <span class="text-2xl mr-4">👥</span>
                             <div>
                                 <strong class="text-slate-900 block mb-1">人頭基礎均分：</strong>
-                                <span class="text-sm">基礎房費由該房的所有入住成員平攤。</span>
+                                <span class="text-sm">基礎房費由該房的所有入住成員平攤。若為雙人房，則由房間成員共同承擔。</span>
                             </div>
                         </li>
                         <li class="flex items-start">
                             <span class="text-2xl mr-4">🏠</span>
                             <div>
                                 <strong class="text-slate-900 block mb-1">房間權重調整 (單人住權重)：</strong>
-                                <span class="text-sm">單獨住一間房的情況，調高了每日單價負擔。</span>
+                                <span class="text-sm">Jason 與 Allen 雖為單人入住，但考量為非自願調整，加成係數降為 <span class="text-sky-600 font-bold">1.1 倍</span> (取代一般飯店的 1.5 倍)。</span>
                             </div>
                         </li>
                         <li class="flex items-start">
@@ -258,13 +258,13 @@
                                 <div class="space-y-2 text-sm">
                                     <div class="flex items-center">
                                         <span class="inline-block w-2 h-2 rounded-full bg-indigo-500 mr-2"></span>
-                                        <span class="font-bold text-indigo-600 mr-2">加大房溢價：</span>
-                                        <span>空間特別大，負擔略高於標準。</span>
+                                        <span class="font-bold text-indigo-600 mr-2">共同分擔：</span>
+                                        <span>扣除單人權重後，剩餘的包棟差額由 House 2 全體 8 人平均吸收，體現團隊互助精神。</span>
                                     </div>
                                     <div class="flex items-center">
                                         <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
-                                        <span class="font-bold text-emerald-600 mr-2">擠房減免：</span>
-                                        <span>三人擠一間房，調降每人負擔單價。</span>
+                                        <span class="font-bold text-emerald-600 mr-2">擠房/大房：</span>
+                                        <span>空間大者負擔略高，空間相對受限者調降單價。</span>
                                     </div>
                                 </div>
                             </div>
@@ -501,17 +501,10 @@
             else if (d.Activity.includes('交通')) { c = "border-amber-300 bg-amber-50/80 shadow-[0_0_15px_rgba(251,191,36,0.15)]"; b = "bg-amber-100 text-amber-600"; t = "text-amber-900"; }
             else if (d.Activity.includes('休Day')) { c = "border-teal-300 bg-teal-50/80 shadow-[0_0_15px_rgba(45,212,191,0.15)]"; b = "bg-teal-100 text-teal-700"; t = "text-teal-900"; }
             
-            // 樣式調整細節：
-            // 1. rounded-lg: 配合小尺寸圓角
-            // 2. p-1.5: 極致縮小內距
-            // 3. text-2xl: 背景圖標再縮小
-            // 4. text-[10px] & text-xs: 字體縮小以適應 grid-cols-5 的窄寬度
-            // 5. tracking-tight: 緊縮字元間距
-            
             itineraryGrid.innerHTML += `<div class="glass-panel rounded-lg p-1.5 flex flex-col justify-between h-full ${c} relative overflow-hidden group"><div class="absolute -top-1 -right-1 p-1 opacity-10 group-hover:opacity-20 text-2xl">${getIcon(d.Activity)}</div><div><div class="flex items-center gap-1 mb-0.5"><span class="${b} px-1.5 py-0.5 rounded-full text-[10px] font-bold shadow-sm leading-none">${d.Date}</span></div><h4 class="text-xs font-bold ${t} mb-0.5 leading-tight tracking-tight">${d.Activity}</h4></div><div class="mt-1 space-y-0 text-[10px] text-slate-500 leading-tight"><div>🏠 <strong class="text-slate-700">${d.Location}</strong></div><div>🏔️ <strong class="text-slate-700">${d.Resort}</strong></div></div></div>`;
         });
 
-        /** 2. Accommodation - Corrected Links & House Logic */
+        /** 2. Accommodation - Corrected Links & House Logic (Kevin Removed, 1.1x applied) */
         const accomData = [
             {
                 "period": "3/6 - 3/11",
@@ -533,11 +526,11 @@
                         "map": "https://maps.app.goo.gl/Z8rmMC9quQfwyTKT7",
                         "airbnb": "https://www.airbnb.com.tw/rooms/1500371023344171865?guests=1&adults=1&s=67&unique_share_id=a667afab-efdb-4783-80b9-06eaf346f3ff",
                         "rooms": [
-                            {"name": "臥室 1", "people": [{"name": "Allen", "cost": 10070}, {"name": "Jason", "cost": 10070}]},
-                            {"name": "臥室 2", "people": [{"name": "Shawn", "cost": 10070}, {"name": "國鈺", "cost": 10070}]},
-                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 10070}, {"name": "湘", "cost": 10070}]},
-                            {"name": "臥室 4", "people": [{"name": "Ann lin", "cost": 10070}, {"name": "Derek", "cost": 10070}]},
-                            {"name": "臥室 5", "people": [{"name": "Kevin", "cost": 12100}]}
+                            {"name": "臥室 1", "people": [{"name": "Allen", "cost": 12430}]},
+                            {"name": "臥室 2", "people": [{"name": "Shawn", "cost": 11300}, {"name": "國鈺", "cost": 11300}]},
+                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 11300}, {"name": "湘", "cost": 11300}]},
+                            {"name": "臥室 4", "people": [{"name": "Ann lin", "cost": 11300}, {"name": "Derek", "cost": 11300}]},
+                            {"name": "臥室 5", "people": [{"name": "Jason", "cost": 12430}]}
                         ]
                     }
                 ]
@@ -558,21 +551,40 @@
                     },
                     {
                         "name": "House 2",
-                        "map": "https://maps.app.goo.gl/edJtpGZnaZohQHDd7`。",
+                        "map": "https://maps.app.goo.gl/edJtpGZnaZohQHDd7",
                         "airbnb": "https://www.airbnb.com.tw/rooms/1406335502924828688?guests=1&adults=1&s=67&unique_share_id=ec75faff-7c08-439f-9300-15587650f5ad",
                         "rooms": [
-                            {"name": "臥室 1", "people": [{"name": "Shawn", "cost": 8576}, {"name": "國鈺", "cost": 8576}]},
-                            {"name": "臥室 2", "people": [{"name": "Ann lin", "cost": 9608}, {"name": "Derek", "cost": 9608}]},
-                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 8576}, {"name": "湘", "cost": 8576}]},
-                            {"name": "臥室 4", "people": [{"name": "Kevin", "cost": 12440}]},
-                            {"name": "臥室 5", "people": [{"name": "Allen", "cost": 8576}, {"name": "Jason", "cost": 8576}]}
+                            {"name": "臥室 1", "people": [{"name": "Shawn", "cost": 9847}, {"name": "國鈺", "cost": 9847}]},
+                            {"name": "臥室 2", "people": [{"name": "Ann lin", "cost": 11029}, {"name": "Derek", "cost": 11029}]},
+                            {"name": "臥室 3", "people": [{"name": "Anna", "cost": 9847}, {"name": "湘", "cost": 9847}]},
+                            {"name": "臥室 4", "people": [{"name": "Jason", "cost": 10833}]},
+                            {"name": "臥室 5", "people": [{"name": "Allen", "cost": 10833}]}
                         ]
                     }
                 ]
             }
         ];
 
-        const costSummary = [{"分配人員": "Allen", "Total_Cost": 18646}, {"分配人員": "Ann lin", "Total_Cost": 19678}, {"分配人員": "Anna", "Total_Cost": 18646}, {"分配人員": "Charlene", "Total_Cost": 18243}, {"分配人員": "Daniel", "Total_Cost": 18243}, {"分配人員": "Derek", "Total_Cost": 19678}, {"分配人員": "Eric", "Total_Cost": 18243}, {"分配人員": "Jason", "Total_Cost": 18646}, {"分配人員": "Jocelyn", "Total_Cost": 18243}, {"分配人員": "Kevin", "Total_Cost": 24540}, {"分配人員": "Shawn", "Total_Cost": 18646}, {"分配人員": "Sophie", "Total_Cost": 18243}, {"分配人員": "Taco", "Total_Cost": 19132}, {"分配人員": "Tony", "Total_Cost": 18243}, {"分配人員": "周于佩", "Total_Cost": 17187}, {"分配人員": "國鈺", "Total_Cost": 18646}, {"分配人員": "大師哥", "Total_Cost": 17187}, {"分配人員": "湘", "Total_Cost": 18646}];
+        const costSummary = [
+            {"分配人員": "Allen", "Total_Cost": 23263},
+            {"分配人員": "Ann lin", "Total_Cost": 22329},
+            {"分配人員": "Anna", "Total_Cost": 21147},
+            {"分配人員": "Charlene", "Total_Cost": 18243},
+            {"分配人員": "Daniel", "Total_Cost": 18243},
+            {"分配人員": "Derek", "Total_Cost": 22329},
+            {"分配人員": "Eric", "Total_Cost": 18243},
+            {"分配人員": "Jason", "Total_Cost": 23263},
+            {"分配人員": "Jocelyn", "Total_Cost": 18243},
+            {"分配人員": "Shawn", "Total_Cost": 21147},
+            {"分配人員": "Sophie", "Total_Cost": 18243},
+            {"分配人員": "Taco", "Total_Cost": 19132},
+            {"分配人員": "Tony", "Total_Cost": 18243},
+            {"分配人員": "周于佩", "Total_Cost": 17187},
+            {"分配人員": "國鈺", "Total_Cost": 21147},
+            {"分配人員": "大師哥", "Total_Cost": 17187},
+            {"分配人員": "湘", "Total_Cost": 21147}
+        ];
+        
         const accomTabs = document.getElementById('accom-tabs');
         const accomContent = document.getElementById('accom-content');
         const periods = accomData.map(d => d.period); // Already sorted in code structure
@@ -621,8 +633,16 @@
         costSummary.forEach(c => costBody.innerHTML += `<tr class="border-b border-slate-200 hover:bg-white/50"><td class="py-3 px-4 font-bold text-slate-700">${c['分配人員']}</td><td class="py-3 px-4 text-right font-mono text-sky-600">$${c['Total_Cost'].toLocaleString()}</td></tr>`);
 
         /** 3. Cars */
-        const carsData = [{"name": "車1", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Jason", "passengers": ["Allen", "湘"]}, {"name": "車2", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Shawn", "passengers": ["國鈺", "Kevin"]}, {"name": "車3", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Derek", "passengers": ["Ann lin", "Anna"]}, {"name": "車4", "price": 74730, "model": "Toyota Yaris Cross", "captain": "Charlene", "passengers": ["Daniel"]}, {"name": "車5", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Eric", "passengers": ["Jocelyn", "Sophie", "Tony"]}, {"name": "車6", "price": "TBD", "model": "待定車款", "captain": "Taco", "passengers": ["周于佩", "大師哥"]}];
-        const drivers = new Set(['Jason', 'Allen', 'Shawn', 'Kevin', 'Charlene', 'Daniel', 'Eric', 'Taco', 'Derek']);
+        // Clean car price data, re-assigned after Kevin left
+        const carsData = [
+            {"name": "車1", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Jason", "passengers": ["湘", "Shawn", "國鈺"]}, 
+            {"name": "車3", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Derek", "passengers": ["Ann lin", "Anna", "Allen"]}, 
+            {"name": "車4", "price": 74730, "model": "Toyota Yaris Cross", "captain": "Charlene", "passengers": ["Daniel"]}, 
+            {"name": "車5", "price": 79200, "model": "【三菱】Delica D2 Hybrid", "captain": "Eric", "passengers": ["Jocelyn", "Sophie", "Tony"]}, 
+            {"name": "車6", "price": "TBD", "model": "待定車款", "captain": "Taco", "passengers": ["周于佩", "大師哥"]}
+        ];
+        
+        const drivers = new Set(['Jason', 'Allen', 'Shawn', 'Charlene', 'Daniel', 'Eric', 'Taco', 'Derek']);
         const carsGrid = document.getElementById('cars-grid');
         carsData.forEach(c => {
             const people = [c.captain, ...c.passengers];
